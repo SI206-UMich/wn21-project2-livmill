@@ -1,3 +1,5 @@
+# Names: Olivia Miller (livmill), Samriddhi Gupta (guptasam)
+
 from bs4 import BeautifulSoup
 import requests
 import re
@@ -5,8 +7,8 @@ import os
 import csv
 import unittest
 
-
 def get_titles_from_search_results(filename):
+
     """
     Write a function that creates a BeautifulSoup object on "search_results.htm". Parse
     through the object and return a list of tuples containing book titles (as printed on the Goodreads website) 
@@ -14,9 +16,26 @@ def get_titles_from_search_results(filename):
 
     [('Book title 1', 'Author 1'), ('Book title 2', 'Author 2')...]
     """
+    # open file and read content .read
+    # soup object with variable for read
+    # find classes and tags
+    # loop to create tuple
+ 
+    with open("search_results.htm") as doc:
+        read_file = doc.read()
 
-    pass
+    soup = BeautifulSoup(read_file, 'html.parser')
 
+    book_contents = soup.find_all('tr', itemtype="http://schema.org/Book")
+
+    tuple_list = []
+    for book in book_contents:
+        title = soup.find('a', class_ = 'bookTitle').text.strip()
+        authors = soup.find_all('div', class_ ="authorName__container")[0].text.strip()
+        tuple_list.append((title, authors))
+    
+    return tuple_list
+    
 
 def get_search_links():
     """
@@ -32,7 +51,16 @@ def get_search_links():
 
     """
 
-    pass
+    r = requests.get("https://www.goodreads.com/search?q=fantasy&qid=NwUsLiA2Nc")
+    soup = BeautifulSoup(r.content, 'html.parser')
+    url_list = []
+
+    books = soup.find_all('a', class_ = 'bookTitle')
+    for book in books:
+        if book['href'].startswith('/book/show/'):
+            url_list.append('https://www.goodreads.com' + book['href'])
+    
+    return url_list[:10]
 
 
 def get_book_summary(book_url):
@@ -49,7 +77,20 @@ def get_book_summary(book_url):
     Make sure to strip() any newlines from the book title and number of pages.
     """
 
-    pass
+    r = requests.get(book_url)
+    soup = BeautifulSoup(r.content, 'html.parser')
+    title = soup.find('h1', class_ = "gr-h1 gr-h1--serif").text.strip()
+    author = soup.find('a', class_ = "authorName").text.strip()
+    pages = soup.find('span', itemprop = "numberOfPages").text.strip()
+    pagesNum = pages[:3]
+    pagesInt = int(pagesNum)
+
+
+    print(title)
+    print(author)
+    print(pagesInt)
+    
+
 
 
 def summarize_best_books(filepath):
@@ -63,7 +104,11 @@ def summarize_best_books(filepath):
     ("Fiction", "The Testaments (The Handmaid's Tale, #2)", "https://www.goodreads.com/choiceawards/best-fiction-books-2020") 
     to your list of tuples.
     """
-    pass
+    # with open(filepath) as f:
+    #     readfile = f.read() #is this right URL
+    # soup = BeautifulSoup(readfile, 'html.parser')
+    # url_list = []
+    # with open as f
 
 
 def write_csv(data, filename):
@@ -115,9 +160,11 @@ class TestCases(unittest.TestCase):
         # check that the first book and author tuple is correct (open search_results.htm and find it)
 
         # check that the last title is correct (open search_results.htm and find it)
+        pass
 
     def test_get_search_links(self):
         # check that TestCases.search_urls is a list
+        get_search_links()
 
         # check that the length of TestCases.search_urls is correct (10 URLs)
 
@@ -129,7 +176,7 @@ class TestCases(unittest.TestCase):
     def test_get_book_summary(self):
         # create a local variable – summaries – a list containing the results from get_book_summary()
         # for each URL in TestCases.search_urls (should be a list of tuples)
-
+        get_book_summary('https://www.goodreads.com/book/show/84136.Fantasy_Lover?from_search=true&from_srp=true&qid=NwUsLiA2Nc&rank=1')
         # check that the number of book summaries is correct (10)
 
             # check that each item in the list is a tuple
@@ -141,6 +188,7 @@ class TestCases(unittest.TestCase):
             # check that the third element in the tuple, i.e. pages is an int
 
             # check that the first book in the search has 337 pages
+            
 
 
     def test_summarize_best_books(self):
@@ -155,7 +203,7 @@ class TestCases(unittest.TestCase):
         # check that the first tuple is made up of the following 3 strings:'Fiction', "The Midnight Library", 'https://www.goodreads.com/choiceawards/best-fiction-books-2020'
 
         # check that the last tuple is made up of the following 3 strings: 'Picture Books', 'A Beautiful Day in the Neighborhood: The Poetry of Mister Rogers', 'https://www.goodreads.com/choiceawards/best-picture-books-2020'
-
+        pass
 
     def test_write_csv(self):
         # call get_titles_from_search_results on search_results.htm and save the result to a variable
@@ -174,10 +222,7 @@ class TestCases(unittest.TestCase):
         # check that the last row is 'Harry Potter: The Prequel (Harry Potter, #0.5)', 'Julian Harrison (Introduction)'
 
 
-
+        pass
 if __name__ == '__main__':
     print(extra_credit("extra_credit.htm"))
     unittest.main(verbosity=2)
-
-
-
