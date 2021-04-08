@@ -25,16 +25,25 @@ def get_titles_from_search_results(filename):
         read_file = doc.read()
 
     soup = BeautifulSoup(read_file, 'html.parser')
-
-    book_contents = soup.find_all('tr', itemtype="http://schema.org/Book")
-
-    tuple_list = []
-    for book in book_contents:
-        title = soup.find('a', class_ = 'bookTitle').text.strip()
-        authors = soup.find_all('div', class_ ="authorName__container")[0].text.strip()
-        tuple_list.append((title, authors))
+    titleList = []
+    authorList = []
+    tupleList = []
     
-    return tuple_list
+
+    title = soup.find_all('a', class_ = 'bookTitle')
+    for i in title:
+        newTitle = i.text.strip()
+        titleList.append(newTitle)
+
+    authors = soup.find_all('div', class_ ="authorName__container")
+    for i in authors:
+        newAuthor = i.text.strip()
+        authorList.append(newAuthor)
+    
+    for i in range(len(titleList)):
+        tupleList.append((titleList[i], authorList[i]))
+    
+    return tupleList
     
 
 def get_search_links():
@@ -155,9 +164,9 @@ def write_csv(data, filename):
 
     This function should not return anything.
     """
-    with open(filename) as f:
+    with open(filename, "w") as f:
         writer = csv.writer(f, delimiter = ",")
-        f.writerow(["Book title","Author Name"])
+        writer.writerow(["Book title","Author Name"])
         for item in data:
             writer.writerow(item)
     
@@ -265,11 +274,11 @@ class TestCases(unittest.TestCase):
         # check that there are 21 lines in the csv
         self.assertEqual(len(lineList), 21)
         # check that the header row is correct
-        self.assertEqual(lineList[0], ["Book title","Author name"]) #comparing to what
+        self.assertEqual(lineList[0], ["Book title","Author Name"]) #comparing to what
         # check that the next row is 'Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling'
-        self.assertEqual(lineList[1], 'Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling')
+        self.assertEqual(lineList[1], ['Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling'])
         # check that the last row is 'Harry Potter: The Prequel (Harry Potter, #0.5)', 'Julian Harrison (Introduction)'
-        self.assertEqual(lineList[-1], 'Harry Potter: The Prequel (Harry Potter, #0.5)', 'Julian Harrison (Introduction)')
+        self.assertEqual(lineList[-1], ['Harry Potter: The Prequel (Harry Potter, #0.5)', 'Julian Harrison (Introduction)'])
 
         
 if __name__ == '__main__':
