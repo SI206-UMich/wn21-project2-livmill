@@ -31,7 +31,10 @@ def get_titles_from_search_results(filename):
         newTitle = i.text.strip()
         titleList.append(newTitle)
 
+    
     authors = soup.find_all('div', class_ ="authorName__container")
+    
+       
     for i in authors:
         newAuthor = i.text.strip()
         authorList.append(newAuthor)
@@ -159,9 +162,11 @@ def write_csv(data, filename):
     """
     with open(filename, "w") as f:
         writer = csv.writer(f, delimiter = ",")
-        writer.writerow(["Book title","Author Name"])
+        writer.writerow(["Book Title","Author Name"])
         for item in data:
             writer.writerow(item)
+
+   
     
 
 
@@ -172,17 +177,17 @@ def extra_credit(filepath):
     Please see the instructions document for more information on how to complete this function.
     You do not have to write test cases for this function.
     """
-    with open(filepath) as doc:
-        read_file = doc.read()
-    soup = BeautifulSoup(read_file, 'html.parser')
-    entities_list = []
-    description = soup.find_all("div", id="description", class_="readable stacked")
-    reg_exp = r'(?:(\b[A-Z][a-z]{2,}\b) (\b[A-Z][a-z]+\b))+'
-    for item in description:
-        found_entities = re.findall(reg_exp, str(item))
-        for entity in found_entities:
-            entities_list.append(entity)
-    return entities_list
+    # with open(filepath) as doc:
+    #     read_file = doc.read()
+    # soup = BeautifulSoup(read_file, 'html.parser')
+    # entities_list = []
+    # description = soup.find_all("div", id="description", class_="readable stacked")
+    # reg_exp = r'(?:(\b[A-Z][a-z]{2,}\b) (\b[A-Z][a-z]+\b))+'
+    # for item in description:
+    #     found_entities = re.findall(reg_exp, str(item))
+    #     for entity in found_entities:
+    #         entities_list.append(entity)
+    # return entities_list
 
 class TestCases(unittest.TestCase):
 
@@ -257,7 +262,7 @@ class TestCases(unittest.TestCase):
         self.assertEqual(best_books_summaries[0][0], 'Fiction')
         self.assertEqual(best_books_summaries[0][1], 'The Midnight Library')
         self.assertEqual(best_books_summaries[0][2], 'https://www.goodreads.com/choiceawards/best-fiction-books-2020')
-        # check that the last tuple is made up of the following 3 strings: 'Picture Books', 'A Beautiful Day in the Neighborhood: The Poetry of Mister Rogers', 'https://www.goodreads.com/choiceawards/best-picture-books-2020'
+        # check that the last tuple is made up of the following 3 strings: 'Picture Books', 'Antiracist Baby', 'https://www.goodreads.com/choiceawards/best-picture-books-2020'
         self.assertEqual(best_books_summaries[-1][0], 'Picture Books')
         self.assertEqual(best_books_summaries[-1][1], 'Antiracist Baby')
         self.assertEqual(best_books_summaries[-1][2], 'https://www.goodreads.com/choiceawards/best-picture-books-2020')
@@ -277,7 +282,7 @@ class TestCases(unittest.TestCase):
         # check that there are 21 lines in the csv
         self.assertEqual(len(lineList), 21)
         # check that the header row is correct
-        self.assertEqual(lineList[0], ["Book title","Author Name"]) #comparing to what
+        self.assertEqual(lineList[0], ["Book Title","Author Name"])
         # check that the next row is 'Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling'
         self.assertEqual(lineList[1], ['Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling'])
         # check that the last row is 'Harry Potter: The Prequel (Harry Potter, #0.5)', 'Julian Harrison (Introduction)'
