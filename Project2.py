@@ -16,10 +16,6 @@ def get_titles_from_search_results(filename):
 
     [('Book title 1', 'Author 1'), ('Book title 2', 'Author 2')...]
     """
-    # open file and read content .read
-    # soup object with variable for read
-    # find classes and tags
-    # loop to create tuple
  
     with open("search_results.htm") as doc:
         read_file = doc.read()
@@ -137,9 +133,6 @@ def summarize_best_books(filepath):
     for i in range(len(empty_list)):
         tup = (empty_list[i], empty_list2[i], empty_list3[i])
         final_list.append(tup)
-    # for i in empty_list:
-    #     print(i)
-    #loop thru all lists and put into tuple add each list at i into loop (emptylist2[i])
     return final_list
 
 
@@ -179,7 +172,17 @@ def extra_credit(filepath):
     Please see the instructions document for more information on how to complete this function.
     You do not have to write test cases for this function.
     """
-    pass
+    with open(filepath) as doc:
+        read_file = doc.read()
+    soup = BeautifulSoup(read_file, 'html.parser')
+    entities_list = []
+    description = soup.find_all("div", id="description", class_="readable stacked")
+    reg_exp = r'(?:(\b[A-Z][a-z]{2,}\b) (\b[A-Z][a-z]+\b))+'
+    for item in description:
+        found_entities = re.findall(reg_exp, str(item))
+        for entity in found_entities:
+            entities_list.append(entity)
+    return entities_list
 
 class TestCases(unittest.TestCase):
 
@@ -212,8 +215,8 @@ class TestCases(unittest.TestCase):
             self.assertEqual(type(i), str)
 
         # check that each URL contains the correct url for Goodreads.com followed by /book/show/
-        #self.assertEqual(
-
+        for i in TestCases.search_urls:
+            self.assertTrue(i.find("https://www.goodreads.com/book/show/")>= 0)
 
 
     def test_get_book_summary(self):
